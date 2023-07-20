@@ -1,0 +1,47 @@
+#include <stdio.h>
+
+int v[70][70];
+
+int knap(int w[], int p[], int n, int ww) {
+    for (int i = 0; i < n + 1; i++) {
+        for (int j = 0; j < ww + 1; j++) {
+            if (i == 0 || j == 0) {
+                v[i][j] = 0;
+                continue;
+            } else {
+                if (w[i - 1] > j) {
+                    v[i][j] = v[i - 1][j];
+                } else {
+                    if (v[i - 1][j] > (v[i - 1][j - w[i - 1]] + p[i - 1])) {
+                        v[i][j] = v[i - 1][j];
+                    } else {
+                        v[i][j] = v[i - 1][j - w[i - 1]] + p[i - 1];
+                    }
+                }
+            }
+        }
+    }
+
+    int q = v[n][ww];
+    for(int i=0;i<n+1;i++){for(int j=0;j<ww+1;j++){
+        printf("%d\t",v[i][j]);
+    }
+       printf("\n");
+    }
+    return q;
+}
+
+int main() {
+    int w[10], p[10], n, ww, ans;
+    printf("Enter the number of items: ");
+    scanf("%d", &n);
+    printf("Enter the weight and profit of each item:\n");
+    for (int i = 0; i < n; i++) {
+        scanf("%d %d", &w[i], &p[i]);
+    }
+    printf("Enter the required weight limit: ");
+    scanf("%d", &ww);
+    ans = knap(w, p, n, ww);
+    printf("Maximum profit: %d\n", ans);
+    return 0;
+}
