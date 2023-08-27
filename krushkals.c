@@ -1,94 +1,83 @@
 #include <stdio.h>
-#include <stdlib.h>
 
-
-int comparator(const void* p1, const void* p2){
-    const int(*x)[3] = p1;
-    const int(*y)[3] = p2;
-
-    return (*x)[2] - (*y)[2];
+int find(int v, int parent[10])
+{
+   while (parent[v] != v)
+   {
+      v = parent[v];
+   }
+   return v;
 }
 
-
-void makeSet(int parent[], int rank[], int n){
-    for (int i = 0; i < n; i++) {
-        parent[i] = i;
-        rank[i] = 0;
-    }
+void union1(int i, int j, int parent[10])
+{
+   if (i < j)
+      parent[j] = i;
+   else
+      parent[i] = j;
 }
 
+void kruskal(int n, int a[10][10])
+{
+   int count, k, min, sum, i, j, t[10][10], u, v, parent[10];
+   count = 0;
+   k = 0;
+   sum = 0;
+   for (i = 0; i < n; i++)
+      parent[i] = i;
+   while (count != n - 1)
+   {
+      min = 999;
+      for (i = 0; i < n; i++)
+      {
+         for (j = 0; j < n; j++)
+         {
 
-int findParent(int parent[], int component){
-    if (parent[component] == component)
-    return component;
-
-    return parent[component]
-= findParent(parent, parent[component]);
+            if (a[i][j] < min && a[i][j] != 0)
+            {
+               min = a[i][j];
+               u = i;
+               v = j;
+            }
+         }
+      }
+      i = find(u, parent);
+      j = find(v, parent);
+      if (i != j)
+      {
+         union1(i, j, parent);
+         t[k][0] = u;
+         t[k][1] = v;
+         k++;
+         count++;
+         sum = sum + a[u][v];
+      }
+      a[u][v] = a[v][u] = 999;
+   }
+   if (count == n - 1)
+   {
+      printf("spanning tree\n");
+      for (i = 0; i < n - 1; i++)
+      {
+         printf("%d %d\n", t[i][0], t[i][1]);
+      }
+      printf("cost of spanning tree=%d\n", sum);
+   }
+   else
+      printf("spanning tree does not exist\n");
 }
 
-
-void unionSet(int u, int v, int parent[], int rank[], int n){
-
-    u = findParent(parent, u);
-    v = findParent(parent, v);
-
-    if (rank[u] < rank[v]) {
-        parent[u] = v;
-    }
-    else if (rank[u] > rank[v]) {
-        parent[v] = u;
-    }
-    else {
-        parent[v] = u;
-        rank[u]++;
-    }
-}
-
-
-void kruskal(int n, int edge[n][3]){
-
-    qsort(edge, n, sizeof(edge[0]), comparator);
-
-    int parent[n];
-    int rank[n];
-
-    makeSet(parent, rank, n);
-
-    int minCost = 0;
-
-    printf("MST\n");
-    for (int i = 0; i < n; i++) {
-        int v1 = findParent(parent, edge[i][0]);
-        int v2 = findParent(parent, edge[i][1]);
-        int wt = edge[i][2];
-
-        if (v1 != v2) {
-            unionSet(v1, v2, parent, rank, n);
-            minCost += wt;
-            printf("%d - %d  %d\n", edge[i][0],
-            edge[i][1], wt);
-        }
-    }
-
-    printf("Cost: %d\n", minCost);
-}
-
-
-int main(){
-    int n;
-    printf("enter the number of edges\n");
-    scanf("%d",&n);
-    int edge[n][3];
-    printf("enter the edges with (src, dest, wt) format\n");
-    for(int i=0;i<n;i++)
-    {
-        for(int j=0;j<3;j++)
-        {
-            scanf("%d",&edge[i][j]);
-        }
-    }
-
-    kruskal(n, edge);
-
-    return 0;
+int main()
+{
+   int n, i, j, a[10][10];
+   printf("enter the number of nodes\n");
+   scanf("%d", &n);
+   printf("enter the adjacency matrix\n");
+   for (i = 0; i < n; i++)
+   {
+      for (j = 0; j < n; j++)
+         scanf("%d", &a[i][j]);
+   }
+   kruskal(n, a);
+   return 0;
 }
