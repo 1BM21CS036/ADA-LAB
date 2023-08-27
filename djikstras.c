@@ -1,60 +1,83 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <limits.h>
+#include <conio.h>
 
-int n;
+void dijkstras();
+int c[10][10], n, src;
+void printPath(int parent[], int node);
 
-int min (int dist[n], int flag[n]){
-    int min = INT_MAX/2, index;
-    for (int i=0; i<n; i++){
-        if (flag[i]==0 && dist[i]<min){
-            min=dist[i];
-            index=i;
+void main()
+{
+    int i, j;
+    printf("\nEnter the no of vertices:\t");
+    scanf("%d", &n);
+    printf("\nEnter the cost matrix:\n");
+    for (i = 1; i <= n; i++)
+    {
+        for (j = 1; j <= n; j++)
+        {
+            scanf("%d", &c[i][j]);
         }
     }
-    return index;
+    printf("\nEnter the source node:\t");
+    scanf("%d", &src);
+    dijkstras();
+    getch();
 }
 
-void dijkstra (int graph[n][n], int src){
-
-    int dist[n], flag[n], i;
-
-    for (i=0; i<n; i++){
-        dist[i]=INT_MAX/2;
-        flag[i]=0;
+void dijkstras()
+{
+    int vis[10], dist[10], parent[10], u, j, count, min;
+    for (j = 1; j <= n; j++)
+    {
+        dist[j] = c[src][j];
+        parent[j] = src;
     }
-    dist[src]=0;
-
-    for (i=0; i<n; i++){
-        int u = min (dist, flag);
-
-        flag[i]=1;
-        for (int v=0; v<n; v++){
-            if (flag[v]==0 && graph[u][v] && dist[u]!=INT_MAX/2 && dist[u]+graph[u][v] < dist[v])
-                dist[v] = dist[u]+graph[u][v];
+    for (j = 1; j <= n; j++)
+    {
+        vis[j] = 0;
+    }
+    dist[src] = 0;
+    vis[src] = 1;
+    count = 1;
+    while (count != n)
+    {
+        min = 9999;
+        for (j = 1; j <= n; j++)
+        {
+            if (dist[j] < min && vis[j] != 1)
+            {
+                min = dist[j];
+                u = j;
+            }
+        }
+        vis[u] = 1;
+        count++;
+        for (j = 1; j <= n; j++)
+        {
+            if (min + c[u][j] < dist[j] && vis[j] != 1)
+            {
+                dist[j] = min + c[u][j];
+                parent[j] = u;
+            }
         }
     }
-    printf ("Vertex  Distance\n");
-    for (i=0; i<n; i++){
-        printf ("%d \t %d\n", i, dist[i]);
+    printf("\nThe shortest distance is:\n");
+    for (j = 1; j <= n; j++)
+    {
+        printf("\n%d-->%d=%d (Path: %d", src, j, dist[j], src);
+        printPath(parent, j);
+        printf(")");
     }
 }
 
-int main(){
-
-    int i,j;
-    printf ("Enter the number of vertices:\n");
-    scanf ("%d", &n);
-    int graph[n][n];
-    printf ("Enter graph in the form of adjecency matrix:\n");
-    for (i=0; i<n; i++){
-        for (j=0; j<n; j++){
-            scanf ("%d", &graph[i][j]);
-        }
+void printPath(int parent[], int node)
+{
+    if (parent[node] == src)
+    {
+        printf("->%d", node);
+        return;
     }
-    printf ("Enter the source node:\n");
-    scanf ("%d", &i);
-    dijkstra (graph, i);
-
-    return 0;
+    printPath(parent, parent[node]);
+    printf("->%d", node);
 }
+
