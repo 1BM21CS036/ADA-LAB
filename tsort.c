@@ -1,42 +1,40 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-int a[10][10], visited[10], s[10], t=-1, n;
+int visited[50],graph[10][10],n,stack[10],top=-1;
 
-void topological(int node){
-    int i;
-    visited[node] = 1;
-    for (i = 0; i < n; i++){
-        if (a[node][i]==1 && visited[node]==0){
-            topological(i);
+void topological_sort(int node){
+    visited[node]=1;
+
+    for(int j=0;j<n;j++){
+        if(graph[node][j]==1 && visited[j]!=1){
+            topological_sort(j);
         }
     }
-    s[++t] = node;
+
+    stack[++top]=node;
 }
 
-int main (){
-
-    int i,j;
-
-    printf("Enter the number of nodes:\n");
-    scanf("%d",&n);
-
-    for (i=0; i<n; i++)
-        s[i] = 0;
-
-    printf("\nEnter graph in matrix form:\n");
-    for (i=0; i<n; i++){
-        for (j=0; j<n; j++){
-            scanf("%d", &a[i][j]);
-        }
+int main(){
+printf("Enter Number of nodes\n");
+scanf("%d",&n);
+printf("Enter the matrix\n");
+for(int i=0;i<n;i++){
+    for(int j=0;j<n;j++){
+        int key;
+        scanf("%d",&key);
+        graph[i][j]=key;
     }
-    for (i=0; i<n; i++){
-        topological(i);
+}for(int i=0;i<n;i++){
+        topological_sort(i);
     }
-    printf ("\nSorted graph:\n");
-    for (i = 0; i<=t; i++){
-        printf("%d ", s[i]);
+   
+
+    printf("\nTOPOLOGICAL SORT\n");
+    while(top!=-1){
+        printf("%d ",stack[top--]);
     }
 
-        return 0;
+return 0;
 }
+
